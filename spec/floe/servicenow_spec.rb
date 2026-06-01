@@ -66,9 +66,8 @@ RSpec.describe Floe::ServiceNow do
     let(:runner) { Floe::ServiceNow::Runner.new }
     let(:secrets) do
       {
-        "instance_url" => "https://dev12345.service-now.com",
-        "username"     => "admin",
-        "password"     => "password"
+        "username" => "admin",
+        "password" => "password"
       }
     end
     let(:context) { double("context") }
@@ -90,7 +89,7 @@ RSpec.describe Floe::ServiceNow do
 
         result = runner.run_async!(
           "servicenow://table_v2/create_incident",
-          {"short_description" => "Test incident"},
+          {"instance_id" => "dev12345", "short_description" => "Test incident"},
           secrets,
           context
         )
@@ -110,7 +109,7 @@ RSpec.describe Floe::ServiceNow do
 
         result = runner.run_async!(
           "servicenow://table_v2/create_incident",
-          {"short_description" => "Test incident"},
+          {"instance_id" => "dev12345", "short_description" => "Test incident"},
           secrets,
           context
         )

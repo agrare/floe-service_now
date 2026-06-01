@@ -38,7 +38,6 @@ ServiceNow operations require authentication credentials passed via the `secrets
 
 ```json
 {
-  "instance_url": "https://your-instance.service-now.com",
   "username": "your-username",
   "password": "your-password"
 }
@@ -69,6 +68,7 @@ Creates a new incident in ServiceNow.
 **Resource**: `servicenow://table_v2/create_incident`
 
 **Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
 - `short_description` (string): Brief description of the incident
 
 **Optional Parameters**:
@@ -84,6 +84,7 @@ Creates a new incident in ServiceNow.
 {
   "Resource": "servicenow://table_v2/create_incident",
   "Parameters": {
+    "instance_id": "dev12345",
     "short_description": "Production server is down",
     "description": "The main production server is not responding to requests",
     "urgency": "1",
@@ -112,6 +113,7 @@ Retrieves a specific incident by sys_id.
 **Resource**: `servicenow://table_v2/get_incident`
 
 **Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
 - `sys_id` (string): The unique identifier of the incident
 
 **Example**:
@@ -120,6 +122,7 @@ Retrieves a specific incident by sys_id.
 {
   "Resource": "servicenow://table_v2/get_incident",
   "Parameters": {
+    "instance_id": "dev12345",
     "sys_id": "abc123def456"
   }
 }
@@ -145,6 +148,7 @@ Updates an existing incident.
 **Resource**: `servicenow://table_v2/update_incident`
 
 **Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
 - `sys_id` (string): The unique identifier of the incident
 
 **Optional Parameters**:
@@ -156,6 +160,7 @@ Updates an existing incident.
 {
   "Resource": "servicenow://table_v2/update_incident",
   "Parameters": {
+    "instance_id": "dev12345",
     "sys_id": "abc123def456",
     "state": "2",
     "work_notes": "Server has been restarted and is now responding",
@@ -182,6 +187,9 @@ Queries incidents with optional filters.
 
 **Resource**: `servicenow://table_v2/query_incidents`
 
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+
 **Optional Parameters**:
 - `query` (string): ServiceNow encoded query string (e.g., "active=true^priority=1")
 - `limit` (string): Maximum number of records to return
@@ -194,6 +202,7 @@ Queries incidents with optional filters.
 {
   "Resource": "servicenow://table_v2/query_incidents",
   "Parameters": {
+    "instance_id": "dev12345",
     "query": "active=true^priority=1",
     "limit": "10",
     "fields": "number,short_description,state,priority"
@@ -231,6 +240,7 @@ Queries incidents with optional filters.
       "Type": "Task",
       "Resource": "servicenow://table_v2/create_incident",
       "Parameters": {
+        "instance_id": "dev12345",
         "short_description": "Automated alert: High CPU usage",
         "description": "CPU usage exceeded 90% threshold",
         "urgency": "2",
@@ -242,6 +252,7 @@ Queries incidents with optional filters.
       "Type": "Task",
       "Resource": "servicenow://table_v2/get_incident",
       "Parameters": {
+        "instance_id": "dev12345",
         "sys_id.$": "$.sys_id"
       },
       "Next": "UpdateIncident"
@@ -250,6 +261,7 @@ Queries incidents with optional filters.
       "Type": "Task",
       "Resource": "servicenow://table_v2/update_incident",
       "Parameters": {
+        "instance_id": "dev12345",
         "sys_id.$": "$.sys_id",
         "work_notes": "Automated remediation in progress",
         "state": "2"
@@ -275,7 +287,7 @@ All methods return standardized error responses following the Floe error format:
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| `Missing Secret: instance_url` | ServiceNow instance URL not provided | Add `instance_url` to secrets |
+| `Missing Parameter: instance_id` | ServiceNow instance identifier not provided | Add `instance_id` to parameters |
 | `Missing Secret: username` | Username not provided | Add `username` to secrets |
 | `Missing Secret: password` | Password not provided | Add `password` to secrets |
 | `Missing Parameter: short_description` | Required parameter missing | Add `short_description` to parameters |
@@ -305,7 +317,7 @@ To test against a real ServiceNow instance, you'll need:
 3. Set environment variables:
 
 ```bash
-export SERVICENOW_INSTANCE_URL="https://devXXXXX.service-now.com"
+export SERVICENOW_INSTANCE_ID="devXXXXX"
 export SERVICENOW_USERNAME="admin"
 export SERVICENOW_PASSWORD="your-password"
 ```
