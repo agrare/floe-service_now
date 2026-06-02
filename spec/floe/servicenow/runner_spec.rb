@@ -137,8 +137,21 @@ RSpec.describe Floe::ServiceNow::Runner do
     let(:runner_context) { {"method" => "table_v2/create_incident", "running" => true} }
 
     it "calls status method" do
+      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+        .with(:create_incident_status!, true)
+        .and_return(true)
       expect(Floe::ServiceNow::TableV2).to receive(:send)
         .with(:create_incident_status!, runner_context)
+
+      runner.status!(runner_context)
+    end
+
+    it "does nothing if status method does not exist" do
+      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+        .with(:create_incident_status!, true)
+        .and_return(false)
+
+      expect(Floe::ServiceNow::TableV2).not_to receive(:send)
 
       runner.status!(runner_context)
     end

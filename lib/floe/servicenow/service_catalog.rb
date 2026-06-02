@@ -28,10 +28,6 @@ module Floe
         end
       end
 
-      private_class_method def self.submit_catalog_item_status!(runner_context)
-        runner_context
-      end
-
       def self.get_request(params, secrets, _context)
         error = verify_credentials(secrets)
         return ServiceNow.error!({}, :cause => error) if error
@@ -51,10 +47,6 @@ module Floe
         end
       end
 
-      private_class_method def self.get_request_status!(runner_context)
-        runner_context
-      end
-
       def self.get_requested_item(params, secrets, _context)
         error = verify_credentials(secrets)
         return ServiceNow.error!({}, :cause => error) if error
@@ -72,10 +64,6 @@ module Floe
         rescue => err
           ServiceNow.error!({}, :cause => err.to_s)
         end
-      end
-
-      private_class_method def self.get_requested_item_status!(runner_context)
-        runner_context
       end
 
       private_class_method def self.verify_submit_catalog_item_params(params)

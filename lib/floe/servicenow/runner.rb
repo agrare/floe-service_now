@@ -36,8 +36,6 @@ module Floe
         return unless api_class.respond_to?(cleanup_method, true)
 
         api_class.send(cleanup_method, runner_context)
-      rescue NoMethodError
-        nil
       end
 
       def status!(runner_context)
@@ -46,7 +44,10 @@ module Floe
         return if runner_context["running"] == false
 
         api_class, api_method = resolve_api_method(method_name)
-        api_class.send(:"#{api_method}_status!", runner_context)
+        status_method = :"#{api_method}_status!"
+        return runner_context unless api_class.respond_to?(status_method, true)
+
+        api_class.send(status_method, runner_context)
       end
 
       def running?(runner_context)

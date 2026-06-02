@@ -28,10 +28,6 @@ module Floe
         end
       end
 
-      private_class_method def self.create_incident_status!(runner_context)
-        runner_context
-      end
-
       # Get an incident by sys_id
       def self.get_incident(params, secrets, _context)
         error = verify_credentials(secrets)
@@ -50,10 +46,6 @@ module Floe
         rescue => err
           ServiceNow.error!({}, :cause => err.to_s)
         end
-      end
-
-      private_class_method def self.get_incident_status!(runner_context)
-        runner_context
       end
 
       # Update an existing incident
@@ -77,10 +69,6 @@ module Floe
         rescue => err
           ServiceNow.error!({}, :cause => err.to_s)
         end
-      end
-
-      private_class_method def self.update_incident_status!(runner_context)
-        runner_context
       end
 
       # Query incidents with optional filters
@@ -108,10 +96,6 @@ module Floe
         end
       end
 
-      private_class_method def self.query_incidents_status!(runner_context)
-        runner_context
-      end
-
       # List available tables
       def self.list_tables(params, secrets, _context)
         error = verify_credentials(secrets)
@@ -135,10 +119,6 @@ module Floe
         rescue => err
           ServiceNow.error!({}, :cause => err.to_s)
         end
-      end
-
-      private_class_method def self.list_tables_status!(runner_context)
-        runner_context
       end
 
       # Verify parameters for create_incident
