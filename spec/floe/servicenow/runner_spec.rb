@@ -11,8 +11,11 @@ RSpec.describe Floe::ServiceNow::Runner do
   let(:context) { double("context") }
 
   describe "::API_CLASSES" do
-    it "maps table_v2 to the TableV2 API class" do
-      expect(described_class::API_CLASSES).to eq("table_v2" => Floe::ServiceNow::TableV2)
+    it "maps supported APIs to their classes" do
+      expect(described_class::API_CLASSES).to eq(
+        "table_v2"        => Floe::ServiceNow::TableV2,
+        "service_catalog" => Floe::ServiceNow::ServiceCatalog
+      )
     end
 
     it "is frozen" do
@@ -80,6 +83,24 @@ RSpec.describe Floe::ServiceNow::Runner do
         expect(result["running"]).to be false
         expect(result["success"]).to be false
         expect(result["output"]["Cause"]).to eq("Test error")
+      end
+    end
+
+    context "with service catalog resource" do
+      let(:resource) { "servicenow://service_catalog/get_request" }
+      let(:params) { {"instance_id" => "dev12345", "request_id" => "req123"} }
+
+      it "delegates to the service catalog API class" do
+        expect(Floe::ServiceNow::ServiceCatalog).to receive(:public_send)
+          .with("get_request", params, secrets, context)
+          .and_return({"running" => false, "success" => true, "output" => {"sys_id" => "req123"}})
+
+        allow(Floe::ServiceNow::ServiceCatalog).to receive(:respond_to?).and_return(false)
+
+        result = runner.run_async!(resource, params, secrets, context)
+
+        expect(result["method"]).to eq("service_catalog/get_request")
+        expect(result["success"]).to be true
       end
     end
   end

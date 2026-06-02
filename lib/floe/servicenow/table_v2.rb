@@ -5,7 +5,7 @@ require "json"
 
 module Floe
   module ServiceNow
-    class TableV2 < Floe::BuiltinRunner::Methods
+    class TableV2 < Floe::ServiceNow::Methods
       # Create a new incident in ServiceNow
       def self.create_incident(params, secrets, _context)
         error = verify_credentials(secrets)
@@ -112,14 +112,6 @@ module Floe
         runner_context
       end
 
-      # Verify that required credentials are present
-      private_class_method def self.verify_credentials(secrets)
-        return "Missing Secret: username" if secrets["username"].nil?
-        return "Missing Secret: password" if secrets["password"].nil?
-
-        nil
-      end
-
       # Verify parameters for create_incident
       private_class_method def self.verify_create_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
@@ -142,47 +134,6 @@ module Floe
         return "Missing Parameter: sys_id" if params["sys_id"].nil?
 
         nil
-      end
-
-      private_class_method def self.verify_instance_id(params)
-        return "Missing Parameter: instance_id" if params["instance_id"].nil?
-
-        nil
-      end
-
-      # Build a Faraday connection with authentication
-      private_class_method def self.build_connection(params, secrets)
-        instance_id = params["instance_id"]
-        username = secrets["username"]
-        password = secrets["password"]
-
-        ::Faraday.new(
-          :url     => "https://#{instance_id}.service-now.com",
-          :headers => {
-            "Content-Type" => "application/json",
-            "Accept"       => "application/json"
-          }
-        ) do |conn|
-          conn.request(:authorization, :basic, username, password)
-          conn.request(:json)
-          conn.response(:json)
-          conn.adapter(::Faraday.default_adapter)
-        end
-      end
-
-      # Handle HTTP response and raise errors for non-success status codes
-      private_class_method def self.handle_response(response)
-        case response.status
-        when 200..299
-          response.body
-        when 401
-          raise "Authentication failed: Invalid credentials"
-        when 404
-          raise "Resource not found"
-        else
-          error_msg = response.body.dig("error", "message") || "HTTP #{response.status}"
-          raise "ServiceNow API error: #{error_msg}"
-        end
       end
     end
   end

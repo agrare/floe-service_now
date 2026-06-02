@@ -5,7 +5,9 @@ ServiceNow API integration for [Floe](https://github.com/ManageIQ/floe) workflow
 ## Features
 
 - **CRUD Operations**: Create, read, update, and query ServiceNow incidents
+- **Service Catalog Operations**: Submit catalog items and retrieve request details
 - **ServiceNow Table API v2**: Uses the standard ServiceNow REST API
+- **ServiceNow Service Catalog API**: Uses the Service Catalog REST API
 - **Synchronous Execution**: All operations complete immediately
 - **Error Handling**: Comprehensive error handling with detailed error messages
 - **Authentication**: Basic authentication via secrets parameter
@@ -58,6 +60,9 @@ servicenow://<api_name>/<method_name>
 For example:
 - `servicenow://table_v2/create_incident` - Create incident using Table API v2
 - `servicenow://table_v2/get_incident` - Get incident using Table API v2
+- `servicenow://service_catalog/submit_catalog_item` - Submit a catalog item request
+- `servicenow://service_catalog/get_request` - Get a catalog request
+- `servicenow://service_catalog/get_requested_item` - Get a requested item summary
 
 ### Available Methods
 
@@ -229,6 +234,114 @@ Queries incidents with optional filters.
 ]
 ```
 
+#### 5. Submit Catalog Item
+
+Submits a Service Catalog item order.
+
+**Resource**: `servicenow://service_catalog/submit_catalog_item`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `item_sys_id` (string): The catalog item sys_id to order
+
+**Optional Parameters**:
+- `quantity` (integer): Requested quantity
+- `variables` (object): Catalog item variables
+- Any other valid order payload fields accepted by the Service Catalog API
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://service_catalog/submit_catalog_item",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "item_sys_id": "060f3afa3731300054b6a3549dbe5d3e",
+    "quantity": 1,
+    "variables": {
+      "requested_for": "john.doe",
+      "justification": "Need developer access"
+    }
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "request_id": "req123",
+  "request_number": "REQ0001",
+  ...
+}
+```
+
+#### 6. Get Request
+
+Retrieves a Service Catalog request.
+
+**Resource**: `servicenow://service_catalog/get_request`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `request_id` (string): The request sys_id
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://service_catalog/get_request",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "request_id": "req123"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "req123",
+  "number": "REQ0001",
+  "state": "requested",
+  ...
+}
+```
+
+#### 7. Get Requested Item
+
+Retrieves a requested item summary.
+
+**Resource**: `servicenow://service_catalog/get_requested_item`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `requested_item_id` (string): The requested item sys_id
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://service_catalog/get_requested_item",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "requested_item_id": "ritm123"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "ritm123",
+  "number": "RITM0001",
+  "state": "requested",
+  ...
+}
+```
+
 ### Complete Workflow Example
 
 ```json
@@ -292,8 +405,11 @@ All methods return standardized error responses following the Floe error format:
 | `Missing Secret: password` | Password not provided | Add `password` to secrets |
 | `Missing Parameter: short_description` | Required parameter missing | Add `short_description` to parameters |
 | `Missing Parameter: sys_id` | sys_id not provided | Add `sys_id` to parameters |
+| `Missing Parameter: item_sys_id` | Catalog item sys_id not provided | Add `item_sys_id` to parameters |
+| `Missing Parameter: request_id` | Request sys_id not provided | Add `request_id` to parameters |
+| `Missing Parameter: requested_item_id` | Requested item sys_id not provided | Add `requested_item_id` to parameters |
 | `Authentication failed: Invalid credentials` | Invalid username/password | Verify credentials |
-| `Resource not found` | Incident sys_id does not exist | Verify sys_id is correct |
+| `Resource not found` | Requested ServiceNow resource does not exist | Verify the supplied identifier is correct |
 | `ServiceNow API error: <message>` | ServiceNow API returned an error | Check ServiceNow logs and API documentation |
 
 ## Development
