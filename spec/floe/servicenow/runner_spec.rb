@@ -13,7 +13,7 @@ RSpec.describe Floe::ServiceNow::Runner do
   describe "::API_CLASSES" do
     it "maps supported APIs to their classes" do
       expect(described_class::API_CLASSES).to eq(
-        "table_v2"        => Floe::ServiceNow::TableV2,
+        "table"           => Floe::ServiceNow::Table,
         "service_catalog" => Floe::ServiceNow::ServiceCatalog,
         "cmdb"            => Floe::ServiceNow::Cmdb
       )
@@ -26,19 +26,19 @@ RSpec.describe Floe::ServiceNow::Runner do
 
   describe "#run_async!" do
     context "with valid resource" do
-      let(:resource) { "servicenow://table_v2/create_incident" }
+      let(:resource) { "servicenow://table/create_incident" }
       let(:params) { {"instance_id" => "dev12345", "short_description" => "Test incident"} }
 
       it "delegates to the resolved API class" do
-        expect(Floe::ServiceNow::TableV2).to receive(:public_send)
+        expect(Floe::ServiceNow::Table).to receive(:public_send)
           .with("create_incident", params, secrets, context)
           .and_return({"running" => false, "success" => true, "output" => {"sys_id" => "123"}})
 
-        allow(Floe::ServiceNow::TableV2).to receive(:respond_to?).and_return(false)
+        allow(Floe::ServiceNow::Table).to receive(:respond_to?).and_return(false)
 
         result = runner.run_async!(resource, params, secrets, context)
 
-        expect(result["method"]).to eq("table_v2/create_incident")
+        expect(result["method"]).to eq("table/create_incident")
         expect(result["success"]).to be true
       end
     end
@@ -55,7 +55,7 @@ RSpec.describe Floe::ServiceNow::Runner do
     end
 
     context "with undefined method" do
-      let(:resource) { "servicenow://table_v2/undefined_method" }
+      let(:resource) { "servicenow://table/undefined_method" }
       let(:params) { {} }
 
       it "returns error response" do
@@ -69,15 +69,15 @@ RSpec.describe Floe::ServiceNow::Runner do
     end
 
     context "when method raises an error" do
-      let(:resource) { "servicenow://table_v2/create_incident" }
+      let(:resource) { "servicenow://table/create_incident" }
       let(:params) { {"instance_id" => "dev12345", "short_description" => "Test incident"} }
 
       it "returns error response" do
-        allow(Floe::ServiceNow::TableV2).to receive(:public_send)
+        allow(Floe::ServiceNow::Table).to receive(:public_send)
           .with("create_incident", params, secrets, context)
           .and_raise(StandardError, "Test error")
 
-        allow(Floe::ServiceNow::TableV2).to receive(:respond_to?).and_return(false)
+        allow(Floe::ServiceNow::Table).to receive(:respond_to?).and_return(false)
 
         result = runner.run_async!(resource, params, secrets, context)
 
@@ -107,20 +107,20 @@ RSpec.describe Floe::ServiceNow::Runner do
   end
 
   describe "#cleanup" do
-    let(:runner_context) { {"method" => "table_v2/create_incident"} }
+    let(:runner_context) { {"method" => "table/create_incident"} }
 
     it "calls cleanup method if it exists" do
-      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+      allow(Floe::ServiceNow::Table).to receive(:respond_to?)
         .with(:create_incident_cleanup, true)
         .and_return(true)
-      expect(Floe::ServiceNow::TableV2).to receive(:send)
+      expect(Floe::ServiceNow::Table).to receive(:send)
         .with(:create_incident_cleanup, runner_context)
 
       runner.cleanup(runner_context)
     end
 
     it "does nothing if cleanup method does not exist" do
-      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+      allow(Floe::ServiceNow::Table).to receive(:respond_to?)
         .with(:create_incident_cleanup, true)
         .and_return(false)
 
@@ -135,24 +135,24 @@ RSpec.describe Floe::ServiceNow::Runner do
   end
 
   describe "#status!" do
-    let(:runner_context) { {"method" => "table_v2/create_incident", "running" => true} }
+    let(:runner_context) { {"method" => "table/create_incident", "running" => true} }
 
     it "calls status method" do
-      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+      allow(Floe::ServiceNow::Table).to receive(:respond_to?)
         .with(:create_incident_status!, true)
         .and_return(true)
-      expect(Floe::ServiceNow::TableV2).to receive(:send)
+      expect(Floe::ServiceNow::Table).to receive(:send)
         .with(:create_incident_status!, runner_context)
 
       runner.status!(runner_context)
     end
 
     it "does nothing if status method does not exist" do
-      allow(Floe::ServiceNow::TableV2).to receive(:respond_to?)
+      allow(Floe::ServiceNow::Table).to receive(:respond_to?)
         .with(:create_incident_status!, true)
         .and_return(false)
 
-      expect(Floe::ServiceNow::TableV2).not_to receive(:send)
+      expect(Floe::ServiceNow::Table).not_to receive(:send)
 
       runner.status!(runner_context)
     end
@@ -160,7 +160,7 @@ RSpec.describe Floe::ServiceNow::Runner do
     it "does nothing if not running" do
       runner_context["running"] = false
 
-      expect(Floe::ServiceNow::TableV2).not_to receive(:send)
+      expect(Floe::ServiceNow::Table).not_to receive(:send)
 
       runner.status!(runner_context)
     end

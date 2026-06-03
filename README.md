@@ -7,7 +7,7 @@ ServiceNow API integration for [Floe](https://github.com/ManageIQ/floe) workflow
 - **CRUD Operations**: Create, read, update, and query ServiceNow incidents
 - **Service Catalog Operations**: Submit catalog items and retrieve request details
 - **CMDB Operations**: Manage Configuration Items (CIs) and their relationships
-- **ServiceNow Table API v2**: Uses the standard ServiceNow REST API
+- **ServiceNow Table API**: Uses the standard ServiceNow REST API
 - **ServiceNow Service Catalog API**: Uses the Service Catalog REST API
 - **ServiceNow CMDB API**: Uses the CMDB REST API for Configuration Management
 - **Synchronous Execution**: All operations complete immediately
@@ -60,8 +60,8 @@ servicenow://<api_name>/<method_name>
 ```
 
 For example:
-- `servicenow://table_v2/create_incident` - Create incident using Table API v2
-- `servicenow://table_v2/get_incident` - Get incident using Table API v2
+- `servicenow://table/create_incident` - Create incident using Table API
+- `servicenow://table/get_incident` - Get incident using Table API
 - `servicenow://service_catalog/submit_catalog_item` - Submit a catalog item request
 - `servicenow://service_catalog/get_request` - Get a catalog request
 - `servicenow://service_catalog/get_requested_item` - Get a requested item summary
@@ -72,7 +72,7 @@ For example:
 
 Creates a new incident in ServiceNow.
 
-**Resource**: `servicenow://table_v2/create_incident`
+**Resource**: `servicenow://table/create_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -89,7 +89,7 @@ Creates a new incident in ServiceNow.
 
 ```json
 {
-  "Resource": "servicenow://table_v2/create_incident",
+  "Resource": "servicenow://table/create_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "short_description": "Production server is down",
@@ -117,7 +117,7 @@ Creates a new incident in ServiceNow.
 
 Retrieves a specific incident by sys_id.
 
-**Resource**: `servicenow://table_v2/get_incident`
+**Resource**: `servicenow://table/get_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -127,7 +127,7 @@ Retrieves a specific incident by sys_id.
 
 ```json
 {
-  "Resource": "servicenow://table_v2/get_incident",
+  "Resource": "servicenow://table/get_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "sys_id": "abc123def456"
@@ -152,7 +152,7 @@ Retrieves a specific incident by sys_id.
 
 Updates an existing incident.
 
-**Resource**: `servicenow://table_v2/update_incident`
+**Resource**: `servicenow://table/update_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -165,7 +165,7 @@ Updates an existing incident.
 
 ```json
 {
-  "Resource": "servicenow://table_v2/update_incident",
+  "Resource": "servicenow://table/update_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "sys_id": "abc123def456",
@@ -192,7 +192,7 @@ Updates an existing incident.
 
 Queries incidents with optional filters.
 
-**Resource**: `servicenow://table_v2/query_incidents`
+**Resource**: `servicenow://table/query_incidents`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -207,7 +207,7 @@ Queries incidents with optional filters.
 
 ```json
 {
-  "Resource": "servicenow://table_v2/query_incidents",
+  "Resource": "servicenow://table/query_incidents",
   "Parameters": {
     "instance_id": "dev12345",
     "query": "active=true^priority=1",
@@ -686,7 +686,7 @@ Retrieves available Configuration Item classes (types) in the CMDB.
   "States": {
     "CreateIncident": {
       "Type": "Task",
-      "Resource": "servicenow://table_v2/create_incident",
+      "Resource": "servicenow://table/create_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "short_description": "Automated alert: High CPU usage",
@@ -698,7 +698,7 @@ Retrieves available Configuration Item classes (types) in the CMDB.
     },
     "GetIncidentDetails": {
       "Type": "Task",
-      "Resource": "servicenow://table_v2/get_incident",
+      "Resource": "servicenow://table/get_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "sys_id.$": "$.sys_id"
@@ -707,7 +707,7 @@ Retrieves available Configuration Item classes (types) in the CMDB.
     },
     "UpdateIncident": {
       "Type": "Task",
-      "Resource": "servicenow://table_v2/update_incident",
+      "Resource": "servicenow://table/update_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "sys_id.$": "$.sys_id",

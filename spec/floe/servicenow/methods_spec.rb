@@ -5,8 +5,8 @@ RSpec.describe Floe::ServiceNow::Methods do
     expect(described_class.superclass).to eq(Floe::BuiltinRunner::Methods)
   end
 
-  it "is the superclass for TableV2" do
-    expect(Floe::ServiceNow::TableV2.superclass).to eq(described_class)
+  it "is the superclass for Table" do
+    expect(Floe::ServiceNow::Table.superclass).to eq(described_class)
   end
 
   it "is the superclass for ServiceCatalog" do

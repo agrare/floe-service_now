@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Floe::ServiceNow::TableV2 do
+RSpec.describe Floe::ServiceNow::Table do
   let(:secrets) do
     {
       "username" => "admin",

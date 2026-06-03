@@ -76,7 +76,7 @@ RSpec.describe Floe::ServiceNow do
       let(:connection) { instance_double(Faraday::Connection) }
 
       before do
-        allow(Floe::ServiceNow::TableV2).to receive(:build_connection).and_return(connection)
+        allow(Floe::ServiceNow::Table).to receive(:build_connection).and_return(connection)
       end
 
       it "creates an incident end-to-end" do
@@ -88,13 +88,13 @@ RSpec.describe Floe::ServiceNow do
                                             .and_return(response)
 
         result = runner.run_async!(
-          "servicenow://table_v2/create_incident",
+          "servicenow://table/create_incident",
           {"instance_id" => "dev12345", "short_description" => "Test incident"},
           secrets,
           context
         )
 
-        expect(result["method"]).to eq("table_v2/create_incident")
+        expect(result["method"]).to eq("table/create_incident")
         expect(result["success"]).to be true
         expect(result["output"]["sys_id"]).to eq("abc123")
         expect(runner.running?(result)).to be false
@@ -108,7 +108,7 @@ RSpec.describe Floe::ServiceNow do
         expect(connection).to receive(:post).and_return(response)
 
         result = runner.run_async!(
-          "servicenow://table_v2/create_incident",
+          "servicenow://table/create_incident",
           {"instance_id" => "dev12345", "short_description" => "Test incident"},
           secrets,
           context

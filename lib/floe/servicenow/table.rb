@@ -5,7 +5,7 @@ require "json"
 
 module Floe
   module ServiceNow
-    class TableV2 < Floe::ServiceNow::Methods
+    class Table < Floe::ServiceNow::Methods
       # Create a new incident in ServiceNow
       def self.create_incident(params, secrets, _context)
         error = verify_credentials(secrets)
