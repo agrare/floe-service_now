@@ -5,7 +5,8 @@ module Floe
     class Runner < Floe::BuiltinRunner::Runner
       API_CLASSES = {
         "table_v2"        => TableV2,
-        "service_catalog" => ServiceCatalog
+        "service_catalog" => ServiceCatalog,
+        "cmdb"            => Cmdb
       }.freeze
 
       def run_async!(resource, params, secrets, context)

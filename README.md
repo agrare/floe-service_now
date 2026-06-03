@@ -6,8 +6,10 @@ ServiceNow API integration for [Floe](https://github.com/ManageIQ/floe) workflow
 
 - **CRUD Operations**: Create, read, update, and query ServiceNow incidents
 - **Service Catalog Operations**: Submit catalog items and retrieve request details
+- **CMDB Operations**: Manage Configuration Items (CIs) and their relationships
 - **ServiceNow Table API v2**: Uses the standard ServiceNow REST API
 - **ServiceNow Service Catalog API**: Uses the Service Catalog REST API
+- **ServiceNow CMDB API**: Uses the CMDB REST API for Configuration Management
 - **Synchronous Execution**: All operations complete immediately
 - **Error Handling**: Comprehensive error handling with detailed error messages
 - **Authentication**: Basic authentication via secrets parameter
@@ -348,6 +350,339 @@ Retrieves a requested item summary.
 {
   "Comment": "ServiceNow Incident Management Workflow",
   "StartAt": "CreateIncident",
+
+### CMDB API Methods
+
+The CMDB (Configuration Management Database) API provides methods for managing Configuration Items (CIs) and their relationships in ServiceNow.
+
+#### 1. Get Configuration Item
+
+Retrieves a specific Configuration Item by sys_id.
+
+**Resource**: `servicenow://cmdb/get_ci`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the CI
+
+**Optional Parameters**:
+- `table` (string): The CMDB table name (defaults to "cmdb_ci" if not specified)
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/get_ci",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456",
+    "table": "cmdb_ci_server"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "name": "Server01",
+  "ip_address": "192.168.1.1",
+  "operational_status": "1",
+  ...
+}
+```
+
+#### 2. Query Configuration Items
+
+Queries Configuration Items with optional filters.
+
+**Resource**: `servicenow://cmdb/query_cis`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+
+**Optional Parameters**:
+- `table` (string): The CMDB table name (defaults to "cmdb_ci")
+- `query` (string): ServiceNow encoded query string (e.g., "ip_address=192.168.1.1^operational_status=1")
+- `limit` (string): Maximum number of records to return
+- `offset` (string): Starting record number for pagination
+- `fields` (string): Comma-separated list of fields to return
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/query_cis",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "table": "cmdb_ci_server",
+    "query": "operational_status=1^ip_addressSTARTSWITH192.168",
+    "limit": "10",
+    "fields": "name,ip_address,operational_status"
+  }
+}
+```
+
+**Response**:
+
+```json
+[
+  {
+    "name": "Server01",
+    "ip_address": "192.168.1.1",
+    "operational_status": "1"
+  },
+  {
+    "name": "Server02",
+    "ip_address": "192.168.1.2",
+    "operational_status": "1"
+  }
+]
+```
+
+#### 3. Create Configuration Item
+
+Creates a new Configuration Item in ServiceNow CMDB.
+
+**Resource**: `servicenow://cmdb/create_ci`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `name` (string): Name of the Configuration Item
+
+**Optional Parameters**:
+- `table` (string): The CMDB table name (defaults to "cmdb_ci")
+- Any other valid CI table fields
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/create_ci",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "table": "cmdb_ci_server",
+    "name": "Server01",
+    "ip_address": "192.168.1.1",
+    "operational_status": "1",
+    "environment": "Production"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "name": "Server01",
+  "ip_address": "192.168.1.1",
+  "operational_status": "1",
+  ...
+}
+```
+
+#### 4. Update Configuration Item
+
+Updates an existing Configuration Item.
+
+**Resource**: `servicenow://cmdb/update_ci`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the CI
+
+**Optional Parameters**:
+- `table` (string): The CMDB table name (defaults to "cmdb_ci")
+- Any valid CI table fields to update
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/update_ci",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456",
+    "table": "cmdb_ci_server",
+    "ip_address": "192.168.1.10",
+    "operational_status": "2"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "name": "Server01",
+  "ip_address": "192.168.1.10",
+  "operational_status": "2",
+  ...
+}
+```
+
+#### 5. Delete Configuration Item
+
+Deletes a Configuration Item from ServiceNow CMDB.
+
+**Resource**: `servicenow://cmdb/delete_ci`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the CI
+
+**Optional Parameters**:
+- `table` (string): The CMDB table name (defaults to "cmdb_ci")
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/delete_ci",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456",
+    "table": "cmdb_ci_server"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "deleted": true,
+  "sys_id": "abc123def456"
+}
+```
+
+#### 6. Get CI Relationships
+
+Retrieves a Configuration Item and all its relationships (parent and child).
+
+**Resource**: `servicenow://cmdb/get_ci_relationships`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the CI
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/get_ci_relationships",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "name": "Server01",
+  "ip_address": "192.168.1.1",
+  "relationships": [
+    {
+      "sys_id": "rel123",
+      "parent": "abc123def456",
+      "child": "def456ghi789",
+      "type": "Runs on::Runs"
+    }
+  ]
+}
+```
+
+#### 7. Create CI Relationship
+
+Creates a relationship between two Configuration Items.
+
+**Resource**: `servicenow://cmdb/create_ci_relationship`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `parent_sys_id` (string): The sys_id of the parent CI
+- `child_sys_id` (string): The sys_id of the child CI
+- `relationship_type` (string): The type of relationship (e.g., "Runs on::Runs", "Depends on::Used by")
+
+**Optional Parameters**:
+- `connection_strength` (string): Strength of the connection (1=Weak, 2=Medium, 3=Strong). Defaults to "1"
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/create_ci_relationship",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "parent_sys_id": "abc123def456",
+    "child_sys_id": "def456ghi789",
+    "relationship_type": "Runs on::Runs",
+    "connection_strength": "2"
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "rel123",
+  "parent": "abc123def456",
+  "child": "def456ghi789",
+  "type": "Runs on::Runs",
+  "connection_strength": "2"
+}
+```
+
+#### 8. Get CI Classes
+
+Retrieves available Configuration Item classes (types) in the CMDB.
+
+**Resource**: `servicenow://cmdb/get_ci_classes`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+
+**Optional Parameters**:
+- `limit` (string): Maximum number of records to return
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://cmdb/get_ci_classes",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "limit": "20"
+  }
+}
+```
+
+**Response**:
+
+```json
+[
+  {
+    "name": "cmdb_ci_server",
+    "label": "Server",
+    "super_class": "cmdb_ci_computer"
+  },
+  {
+    "name": "cmdb_ci_computer",
+    "label": "Computer",
+    "super_class": "cmdb_ci"
+  }
+]
+```
+
+
   "States": {
     "CreateIncident": {
       "Type": "Task",
@@ -396,6 +731,64 @@ All methods return standardized error responses following the Floe error format:
 }
 ```
 
+
+### CMDB Workflow Example
+
+```json
+{
+  "Comment": "ServiceNow CMDB Management Workflow",
+  "StartAt": "CreateServer",
+  "States": {
+    "CreateServer": {
+      "Type": "Task",
+      "Resource": "servicenow://cmdb/create_ci",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "table": "cmdb_ci_server",
+        "name": "WebServer01",
+        "ip_address": "192.168.1.100",
+        "operational_status": "1",
+        "environment": "Production"
+      },
+      "Next": "CreateDatabase"
+    },
+    "CreateDatabase": {
+      "Type": "Task",
+      "Resource": "servicenow://cmdb/create_ci",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "table": "cmdb_ci_database",
+        "name": "AppDB01",
+        "operational_status": "1"
+      },
+      "Next": "CreateRelationship"
+    },
+    "CreateRelationship": {
+      "Type": "Task",
+      "Resource": "servicenow://cmdb/create_ci_relationship",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "parent_sys_id.$": "$.States.CreateServer.sys_id",
+        "child_sys_id.$": "$.States.CreateDatabase.sys_id",
+        "relationship_type": "Runs on::Runs",
+        "connection_strength": "2"
+      },
+      "Next": "GetServerWithRelationships"
+    },
+    "GetServerWithRelationships": {
+      "Type": "Task",
+      "Resource": "servicenow://cmdb/get_ci_relationships",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "sys_id.$": "$.States.CreateServer.sys_id"
+      },
+      "End": true
+    }
+  }
+}
+```
+
+
 ### Common Errors
 
 | Error | Cause | Solution |
@@ -408,6 +801,10 @@ All methods return standardized error responses following the Floe error format:
 | `Missing Parameter: item_sys_id` | Catalog item sys_id not provided | Add `item_sys_id` to parameters |
 | `Missing Parameter: request_id` | Request sys_id not provided | Add `request_id` to parameters |
 | `Missing Parameter: requested_item_id` | Requested item sys_id not provided | Add `requested_item_id` to parameters |
+| `Missing Parameter: name` | CI name not provided | Add `name` to parameters |
+| `Missing Parameter: parent_sys_id` | Parent CI sys_id not provided | Add `parent_sys_id` to parameters |
+| `Missing Parameter: child_sys_id` | Child CI sys_id not provided | Add `child_sys_id` to parameters |
+| `Missing Parameter: relationship_type` | Relationship type not provided | Add `relationship_type` to parameters |
 | `Authentication failed: Invalid credentials` | Invalid username/password | Verify credentials |
 | `Resource not found` | Requested ServiceNow resource does not exist | Verify the supplied identifier is correct |
 | `ServiceNow API error: <message>` | ServiceNow API returned an error | Check ServiceNow logs and API documentation |

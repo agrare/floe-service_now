@@ -5,6 +5,7 @@ require_relative "servicenow/version"
 require_relative "servicenow/methods"
 require_relative "servicenow/table_v2"
 require_relative "servicenow/service_catalog"
+require_relative "servicenow/cmdb"
 require_relative "servicenow/runner"
 
 module Floe

@@ -14,7 +14,8 @@ RSpec.describe Floe::ServiceNow::Runner do
     it "maps supported APIs to their classes" do
       expect(described_class::API_CLASSES).to eq(
         "table_v2"        => Floe::ServiceNow::TableV2,
-        "service_catalog" => Floe::ServiceNow::ServiceCatalog
+        "service_catalog" => Floe::ServiceNow::ServiceCatalog,
+        "cmdb"            => Floe::ServiceNow::Cmdb
       )
     end
 
