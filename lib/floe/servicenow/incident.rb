@@ -71,6 +71,16 @@ module Floe
         end
       end
 
+      def self.resolve_incident(params, secrets, context)
+        params['state'] = '6' # state enum 6 is resolved
+        update_incident(params, secrets, context)
+      end
+
+      def self.close_incident(params, secrets, context)
+        params['state'] = '7' # state enum 7 is closed
+        update_incident(params, secrets, context)
+      end
+
       # Query incidents with optional filters
       def self.query_incidents(params, secrets, _context)
         error = verify_credentials(secrets)

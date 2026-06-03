@@ -176,6 +176,101 @@ RSpec.describe Floe::ServiceNow::Incident do
     end
   end
 
+  describe ".resolve_incident" do
+    let(:params) do
+      {
+        "instance_id" => "dev12345",
+        "sys_id"      => "abc123",
+        "close_notes" => "Issue has been resolved"
+      }
+    end
+
+    context "with valid parameters" do
+      let(:response_body) { {"result" => {"sys_id" => "abc123", "state" => "6"}} }
+      let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
+
+      it "resolves an incident and returns success" do
+        expect(connection).to receive(:patch).with("/api/now/table/incident/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+
+        result = described_class.resolve_incident(params, secrets, context)
+
+        expect(result["running"]).to be false
+        expect(result["success"]).to be true
+        expect(result["output"]["state"]).to eq("6")
+      end
+    end
+
+    context "with missing sys_id" do
+      let(:params) { {"instance_id" => "dev12345"} }
+
+      it "returns error for missing sys_id" do
+        result = described_class.resolve_incident(params, secrets, context)
+
+        expect(result["success"]).to be false
+        expect(result["output"]["Cause"]).to eq("Missing Parameter: sys_id")
+      end
+    end
+
+    context "with missing instance_id" do
+      let(:params) { {"sys_id" => "abc123"} }
+
+      it "returns error for missing instance_id" do
+        result = described_class.resolve_incident(params, secrets, context)
+
+        expect(result["success"]).to be false
+        expect(result["output"]["Cause"]).to eq("Missing Parameter: instance_id")
+      end
+    end
+  end
+
+  describe ".close_incident" do
+    let(:params) do
+      {
+        "instance_id" => "dev12345",
+        "sys_id"      => "abc123",
+        "close_code"  => "Solved (Permanently)",
+        "close_notes" => "Issue has been permanently resolved"
+      }
+    end
+
+    context "with valid parameters" do
+      let(:response_body) { {"result" => {"sys_id" => "abc123", "state" => "7"}} }
+      let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
+
+      it "closes an incident and returns success" do
+        expect(connection).to receive(:patch).with("/api/now/table/incident/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+
+        result = described_class.close_incident(params, secrets, context)
+
+        expect(result["running"]).to be false
+        expect(result["success"]).to be true
+        expect(result["output"]["state"]).to eq("7")
+      end
+    end
+
+    context "with missing sys_id" do
+      let(:params) { {"instance_id" => "dev12345"} }
+
+      it "returns error for missing sys_id" do
+        result = described_class.close_incident(params, secrets, context)
+
+        expect(result["success"]).to be false
+        expect(result["output"]["Cause"]).to eq("Missing Parameter: sys_id")
+      end
+    end
+
+    context "with missing instance_id" do
+      let(:params) { {"sys_id" => "abc123"} }
+
+      it "returns error for missing instance_id" do
+        result = described_class.close_incident(params, secrets, context)
+
+        expect(result["success"]).to be false
+        expect(result["output"]["Cause"]).to eq("Missing Parameter: instance_id")
+      end
+    end
+  end
+
   describe ".query_incidents" do
     let(:params) { {"instance_id" => "dev12345", "query" => "active=true", "limit" => "10"} }
 
