@@ -4,9 +4,10 @@ module Floe
   module ServiceNow
     class Runner < Floe::BuiltinRunner::Runner
       API_CLASSES = {
-        "table"           => Table,
+        "cmdb"            => Cmdb,
+        "incident"        => Incident,
         "service_catalog" => ServiceCatalog,
-        "cmdb"            => Cmdb
+        "table"           => Table
       }.freeze
 
       def run_async!(resource, params, secrets, context)

@@ -60,8 +60,9 @@ servicenow://<api_name>/<method_name>
 ```
 
 For example:
-- `servicenow://table/create_incident` - Create incident using Table API
-- `servicenow://table/get_incident` - Get incident using Table API
+- `servicenow://incident/create_incident` - Create incident using Table API
+- `servicenow://incident/get_incident` - Get incident using Table API
+- `servicenow://table/list_tables` - List all tables using Table API
 - `servicenow://service_catalog/submit_catalog_item` - Submit a catalog item request
 - `servicenow://service_catalog/get_request` - Get a catalog request
 - `servicenow://service_catalog/get_requested_item` - Get a requested item summary
@@ -72,7 +73,7 @@ For example:
 
 Creates a new incident in ServiceNow.
 
-**Resource**: `servicenow://table/create_incident`
+**Resource**: `servicenow://incident/create_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -89,7 +90,7 @@ Creates a new incident in ServiceNow.
 
 ```json
 {
-  "Resource": "servicenow://table/create_incident",
+  "Resource": "servicenow://incident/create_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "short_description": "Production server is down",
@@ -117,7 +118,7 @@ Creates a new incident in ServiceNow.
 
 Retrieves a specific incident by sys_id.
 
-**Resource**: `servicenow://table/get_incident`
+**Resource**: `servicenow://incident/get_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -127,7 +128,7 @@ Retrieves a specific incident by sys_id.
 
 ```json
 {
-  "Resource": "servicenow://table/get_incident",
+  "Resource": "servicenow://incident/get_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "sys_id": "abc123def456"
@@ -152,7 +153,7 @@ Retrieves a specific incident by sys_id.
 
 Updates an existing incident.
 
-**Resource**: `servicenow://table/update_incident`
+**Resource**: `servicenow://incident/update_incident`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -165,7 +166,7 @@ Updates an existing incident.
 
 ```json
 {
-  "Resource": "servicenow://table/update_incident",
+  "Resource": "servicenow://incident/update_incident",
   "Parameters": {
     "instance_id": "dev12345",
     "sys_id": "abc123def456",
@@ -192,7 +193,92 @@ Updates an existing incident.
 
 Queries incidents with optional filters.
 
-**Resource**: `servicenow://table/query_incidents`
+
+
+#### 4. Resolve Incident
+
+Resolves an incident by setting its state to 6 (Resolved).
+
+**Resource**: `servicenow://incident/resolve_incident`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the incident
+
+**Optional Parameters**:
+- `close_notes` (string): Resolution notes
+- Any other valid incident table fields to update
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://incident/resolve_incident",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456",
+    "close_notes": "Issue was caused by a misconfiguration. Configuration has been corrected and tested."
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "number": "INC0001234",
+  "state": "6",
+  "close_notes": "Issue was caused by a misconfiguration. Configuration has been corrected and tested.",
+  ...
+}
+```
+
+#### 5. Close Incident
+
+Closes an incident by setting its state to 7 (Closed).
+
+**Resource**: `servicenow://incident/close_incident`
+
+**Required Parameters**:
+- `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
+- `sys_id` (string): The unique identifier of the incident
+
+**Optional Parameters**:
+- `close_code` (string): Closure code (e.g., "Solved (Permanently)", "Solved (Workaround)")
+- `close_notes` (string): Closure notes
+- Any other valid incident table fields to update
+
+**Example**:
+
+```json
+{
+  "Resource": "servicenow://incident/close_incident",
+  "Parameters": {
+    "instance_id": "dev12345",
+    "sys_id": "abc123def456",
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Root cause identified and permanently fixed. Monitoring for 24 hours showed no recurrence."
+  }
+}
+```
+
+**Response**:
+
+```json
+{
+  "sys_id": "abc123def456",
+  "number": "INC0001234",
+  "state": "7",
+  "close_code": "Solved (Permanently)",
+  "close_notes": "Root cause identified and permanently fixed. Monitoring for 24 hours showed no recurrence.",
+  ...
+}
+```
+
+#### 6. Query Incidents
+
+**Resource**: `servicenow://incident/query_incidents`
 
 **Required Parameters**:
 - `instance_id` (string): ServiceNow instance identifier used to build `https://#{instance_id}.service-now.com`
@@ -207,7 +293,7 @@ Queries incidents with optional filters.
 
 ```json
 {
-  "Resource": "servicenow://table/query_incidents",
+  "Resource": "servicenow://incident/query_incidents",
   "Parameters": {
     "instance_id": "dev12345",
     "query": "active=true^priority=1",
@@ -236,7 +322,7 @@ Queries incidents with optional filters.
 ]
 ```
 
-#### 5. Submit Catalog Item
+#### 7. Submit Catalog Item
 
 Submits a Service Catalog item order.
 
@@ -278,7 +364,7 @@ Submits a Service Catalog item order.
 }
 ```
 
-#### 6. Get Request
+#### 8. Get Request
 
 Retrieves a Service Catalog request.
 
@@ -311,7 +397,7 @@ Retrieves a Service Catalog request.
 }
 ```
 
-#### 7. Get Requested Item
+#### 9. Get Requested Item
 
 Retrieves a requested item summary.
 
@@ -683,10 +769,17 @@ Retrieves available Configuration Item classes (types) in the CMDB.
 ```
 
 
+
+### Complete Workflow Example
+
+```json
+{
+  "Comment": "ServiceNow Incident Management Workflow",
+  "StartAt": "CreateIncident",
   "States": {
     "CreateIncident": {
       "Type": "Task",
-      "Resource": "servicenow://table/create_incident",
+      "Resource": "servicenow://incident/create_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "short_description": "Automated alert: High CPU usage",
@@ -698,7 +791,7 @@ Retrieves available Configuration Item classes (types) in the CMDB.
     },
     "GetIncidentDetails": {
       "Type": "Task",
-      "Resource": "servicenow://table/get_incident",
+      "Resource": "servicenow://incident/get_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "sys_id.$": "$.sys_id"
@@ -707,7 +800,66 @@ Retrieves available Configuration Item classes (types) in the CMDB.
     },
     "UpdateIncident": {
       "Type": "Task",
-      "Resource": "servicenow://table/update_incident",
+      "Resource": "servicenow://incident/update_incident",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "sys_id.$": "$.sys_id",
+        "work_notes": "Automated remediation in progress",
+        "state": "2"
+      },
+      "Next": "ResolveIncident"
+    },
+    "ResolveIncident": {
+      "Type": "Task",
+      "Resource": "servicenow://incident/resolve_incident",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "sys_id.$": "$.sys_id",
+        "close_notes": "CPU usage returned to normal after clearing cache and restarting services"
+      },
+      "Next": "CloseIncident"
+    },
+    "CloseIncident": {
+      "Type": "Task",
+      "Resource": "servicenow://incident/close_incident",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "sys_id.$": "$.sys_id",
+        "close_code": "Solved (Permanently)",
+        "close_notes": "Root cause: Memory leak in application. Applied patch and monitored for 24 hours with no recurrence."
+      },
+      "End": true
+    }
+  }
+}
+```
+
+
+  "States": {
+    "CreateIncident": {
+      "Type": "Task",
+      "Resource": "servicenow://incident/create_incident",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "short_description": "Automated alert: High CPU usage",
+        "description": "CPU usage exceeded 90% threshold",
+        "urgency": "2",
+        "impact": "2"
+      },
+      "Next": "GetIncidentDetails"
+    },
+    "GetIncidentDetails": {
+      "Type": "Task",
+      "Resource": "servicenow://incident/get_incident",
+      "Parameters": {
+        "instance_id": "dev12345",
+        "sys_id.$": "$.sys_id"
+      },
+      "Next": "UpdateIncident"
+    },
+    "UpdateIncident": {
+      "Type": "Task",
+      "Resource": "servicenow://incident/update_incident",
       "Parameters": {
         "instance_id": "dev12345",
         "sys_id.$": "$.sys_id",
