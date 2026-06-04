@@ -946,8 +946,9 @@ All methods return standardized error responses following the Floe error format:
 | Error | Cause | Solution |
 |-------|-------|----------|
 | `Missing Parameter: instance_id` | ServiceNow instance identifier not provided | Add `instance_id` to parameters |
-| `Missing Secret: username` | Username not provided | Add `username` to secrets |
-| `Missing Secret: password` | Password not provided | Add `password` to secrets |
+| `Missing Credentials` | Credentials not provided | Add to Credentials Task payload |
+| `Missing Credential: username` | Username not provided | Add `username` to Credentials |
+| `Missing Credential: password` | Password not provided | Add `password` to Credentials |
 | `Missing Parameter: short_description` | Required parameter missing | Add `short_description` to parameters |
 | `Missing Parameter: sys_id` | sys_id not provided | Add `sys_id` to parameters |
 | `Missing Parameter: item_sys_id` | Catalog item sys_id not provided | Add `item_sys_id` to parameters |

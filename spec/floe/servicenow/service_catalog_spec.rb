@@ -136,13 +136,13 @@ RSpec.describe Floe::ServiceNow::ServiceCatalog do
     it "returns error for missing username" do
       secrets.delete("username")
       result = described_class.send(:verify_credentials, secrets)
-      expect(result).to eq("Missing Secret: username")
+      expect(result).to eq("Missing Credential: username")
     end
 
     it "returns error for missing password" do
       secrets.delete("password")
       result = described_class.send(:verify_credentials, secrets)
-      expect(result).to eq("Missing Secret: password")
+      expect(result).to eq("Missing Credential: password")
     end
   end
 

@@ -21,12 +21,12 @@ RSpec.describe Floe::ServiceNow::Methods do
 
     it "returns error for missing username" do
       result = described_class.send(:verify_credentials, {"password" => "password"})
-      expect(result).to eq("Missing Secret: username")
+      expect(result).to eq("Missing Credential: username")
     end
 
     it "returns error for missing password" do
       result = described_class.send(:verify_credentials, {"username" => "admin"})
-      expect(result).to eq("Missing Secret: password")
+      expect(result).to eq("Missing Credential: password")
     end
   end
 

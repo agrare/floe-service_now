@@ -7,8 +7,9 @@ module Floe
   module ServiceNow
     class Methods < Floe::BuiltinRunner::Methods
       private_class_method def self.verify_credentials(secrets)
-        return "Missing Secret: username" if secrets["username"].nil?
-        return "Missing Secret: password" if secrets["password"].nil?
+        return "Missing Credentials"          if secrets.nil?
+        return "Missing Credential: username" if secrets["username"].nil?
+        return "Missing Credential: password" if secrets["password"].nil?
 
         nil
       end
@@ -47,7 +48,10 @@ module Floe
         when 404
           raise "Resource not found"
         else
-          error_msg = response.body.dig("error", "message") || "HTTP #{response.status}"
+          error_detail = response.body.dig("error", "detail")
+          error_msg    = response.body.dig("error", "message")
+          error_msg   += "\n#{error_detail}" if error_msg && error_detail
+          error_msg  ||= "HTTP #{response.status}"
           raise "ServiceNow API error: #{error_msg}"
         end
       end

@@ -64,7 +64,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
         result = described_class.get_ci(params, secrets, context)
 
         expect(result["success"]).to be false
-        expect(result["output"]["Cause"]).to eq("Missing Secret: username")
+        expect(result["output"]["Cause"]).to eq("Missing Credential: username")
       end
     end
   end

@@ -3,7 +3,7 @@
 module Floe
   module ServiceNow
     class Runner < Floe::BuiltinRunner::Runner
-      SCHEME        = "servicenow".freeze
+      SCHEME        = "servicenow"
       SCHEME_PREFIX = "#{SCHEME}://".freeze
       API_CLASSES   = {
         "cmdb"            => Cmdb,

@@ -45,7 +45,7 @@ RSpec.describe Floe::ServiceNow::Incident do
         result = described_class.create_incident(params, secrets, context)
 
         expect(result["success"]).to be false
-        expect(result["output"]["Cause"]).to eq("Missing Secret: username")
+        expect(result["output"]["Cause"]).to eq("Missing Credential: username")
       end
     end
 
@@ -328,13 +328,13 @@ RSpec.describe Floe::ServiceNow::Incident do
     it "returns error for missing username" do
       secrets.delete("username")
       result = described_class.send(:verify_credentials, secrets)
-      expect(result).to eq("Missing Secret: username")
+      expect(result).to eq("Missing Credential: username")
     end
 
     it "returns error for missing password" do
       secrets.delete("password")
       result = described_class.send(:verify_credentials, secrets)
-      expect(result).to eq("Missing Secret: password")
+      expect(result).to eq("Missing Credential: password")
     end
   end
 end
