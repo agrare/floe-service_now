@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+
+require "floe/cli"
+require "floe/servicenow"
+success = Floe::CLI.new.run(ARGV)
+exit(success ? 0 : 1)
