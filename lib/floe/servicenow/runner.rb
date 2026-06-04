@@ -3,7 +3,9 @@
 module Floe
   module ServiceNow
     class Runner < Floe::BuiltinRunner::Runner
-      API_CLASSES = {
+      SCHEME        = "servicenow".freeze
+      SCHEME_PREFIX = "#{SCHEME}://".freeze
+      API_CLASSES   = {
         "cmdb"            => Cmdb,
         "incident"        => Incident,
         "service_catalog" => ServiceCatalog,
@@ -78,3 +80,5 @@ module Floe
     end
   end
 end
+
+Floe::Runner.register_scheme(Floe::ServiceNow::Runner::SCHEME, Floe::ServiceNow::Runner.new)
