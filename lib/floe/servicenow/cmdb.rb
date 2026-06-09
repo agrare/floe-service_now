@@ -209,7 +209,7 @@ module Floe
       # Verify parameters for get_ci
       private_class_method def self.verify_get_ci_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: sys_id" if params["sys_id"].nil?
+        return "Missing Parameter: sys_id"      if params["sys_id"].nil?
 
         nil
       end
@@ -224,7 +224,7 @@ module Floe
       # Verify parameters for create_ci
       private_class_method def self.verify_create_ci_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: name" if params["name"].nil?
+        return "Missing Parameter: attributes"  if params["attributes"].nil?
 
         nil
       end
@@ -232,7 +232,7 @@ module Floe
       # Verify parameters for update_ci
       private_class_method def self.verify_update_ci_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: sys_id" if params["sys_id"].nil?
+        return "Missing Parameter: sys_id"      if params["sys_id"].nil?
 
         nil
       end
@@ -240,7 +240,7 @@ module Floe
       # Verify parameters for delete_ci
       private_class_method def self.verify_delete_ci_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: sys_id" if params["sys_id"].nil?
+        return "Missing Parameter: sys_id"      if params["sys_id"].nil?
 
         nil
       end
@@ -248,16 +248,16 @@ module Floe
       # Verify parameters for get_ci_relationships
       private_class_method def self.verify_get_ci_relationships_params(params)
         return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: sys_id" if params["sys_id"].nil?
+        return "Missing Parameter: sys_id"      if params["sys_id"].nil?
 
         nil
       end
 
       # Verify parameters for create_ci_relationship
       private_class_method def self.verify_create_ci_relationship_params(params)
-        return "Missing Parameter: instance_id" if params["instance_id"].nil?
-        return "Missing Parameter: parent_sys_id" if params["parent_sys_id"].nil?
-        return "Missing Parameter: child_sys_id" if params["child_sys_id"].nil?
+        return "Missing Parameter: instance_id"       if params["instance_id"].nil?
+        return "Missing Parameter: parent_sys_id"     if params["parent_sys_id"].nil?
+        return "Missing Parameter: child_sys_id"      if params["child_sys_id"].nil?
         return "Missing Parameter: relationship_type" if params["relationship_type"].nil?
 
         nil

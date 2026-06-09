@@ -121,8 +121,10 @@ RSpec.describe Floe::ServiceNow::Cmdb do
     let(:params) do
       {
         "instance_id" => "dev12345",
-        "name"        => "Server01",
-        "ip_address"  => "192.168.1.1"
+        "attributes"  => {
+          "name"       => "Server01",
+          "ip_address" => "192.168.1.1"
+        }
       }
     end
 
@@ -146,7 +148,9 @@ RSpec.describe Floe::ServiceNow::Cmdb do
         {
           "instance_id" => "dev12345",
           "table"       => "cmdb_ci_server",
-          "name"        => "Server01"
+          "attributes"  => {
+            "name" => "Server01"
+          }
         }
       end
       let(:response_body) { {"result" => {"sys_id" => "abc123"}} }
@@ -161,14 +165,14 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       end
     end
 
-    context "with missing name" do
+    context "with missing attributes" do
       let(:params) { {"instance_id" => "dev12345"} }
 
       it "returns error for missing name" do
         result = described_class.create_ci(params, secrets, context)
 
         expect(result["success"]).to be false
-        expect(result["output"]["Cause"]).to eq("Missing Parameter: name")
+        expect(result["output"]["Cause"]).to eq("Missing Parameter: attributes")
       end
     end
   end
