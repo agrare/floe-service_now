@@ -22,7 +22,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "retrieves a CI and returns success" do
-        expect(connection).to receive(:get).with("/api/now/cmdb/instance/cmdb_ci/abc123").and_return(response)
+        expect(connection).to receive(:get).with("/api/now/table/cmdb_ci/abc123").and_return(response)
 
         result = described_class.get_ci(params, secrets, context)
 
@@ -38,7 +38,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "retrieves a CI from custom table" do
-        expect(connection).to receive(:get).with("/api/now/cmdb/instance/cmdb_ci_server/abc123").and_return(response)
+        expect(connection).to receive(:get).with("/api/now/table/cmdb_ci_server/abc123").and_return(response)
 
         result = described_class.get_ci(params, secrets, context)
 
@@ -77,7 +77,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "queries CIs and returns success" do
-        expect(connection).to receive(:get).with("/api/now/cmdb/instance/cmdb_ci").and_yield(double.tap do |req|
+        expect(connection).to receive(:get).with("/api/now/table/cmdb_ci").and_yield(double.tap do |req|
           allow(req).to receive(:params).and_return({})
         end).and_return(response)
 
@@ -95,7 +95,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "queries CIs from custom table" do
-        expect(connection).to receive(:get).with("/api/now/cmdb/instance/cmdb_ci_server").and_yield(double.tap do |req|
+        expect(connection).to receive(:get).with("/api/now/table/cmdb_ci_server").and_yield(double.tap do |req|
           allow(req).to receive(:params).and_return({})
         end).and_return(response)
 
@@ -133,7 +133,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 201, :body => response_body) }
 
       it "creates a CI and returns success" do
-        expect(connection).to receive(:post).with("/api/now/cmdb/instance/cmdb_ci").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+        expect(connection).to receive(:post).with("/api/now/table/cmdb_ci").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
 
         result = described_class.create_ci(params, secrets, context)
 
@@ -157,7 +157,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 201, :body => response_body) }
 
       it "creates a CI in custom table" do
-        expect(connection).to receive(:post).with("/api/now/cmdb/instance/cmdb_ci_server").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+        expect(connection).to receive(:post).with("/api/now/table/cmdb_ci_server").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
 
         result = described_class.create_ci(params, secrets, context)
 
@@ -191,7 +191,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "updates a CI and returns success" do
-        expect(connection).to receive(:patch).with("/api/now/cmdb/instance/cmdb_ci/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+        expect(connection).to receive(:patch).with("/api/now/table/cmdb_ci/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
 
         result = described_class.update_ci(params, secrets, context)
 
@@ -214,7 +214,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 200, :body => response_body) }
 
       it "updates a CI in custom table" do
-        expect(connection).to receive(:patch).with("/api/now/cmdb/instance/cmdb_ci_server/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
+        expect(connection).to receive(:patch).with("/api/now/table/cmdb_ci_server/abc123").and_yield(double(:body => nil).tap { |req| allow(req).to receive(:body=) }).and_return(response)
 
         result = described_class.update_ci(params, secrets, context)
 
@@ -241,7 +241,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 204, :body => {}) }
 
       it "deletes a CI and returns success" do
-        expect(connection).to receive(:delete).with("/api/now/cmdb/instance/cmdb_ci/abc123").and_return(response)
+        expect(connection).to receive(:delete).with("/api/now/table/cmdb_ci/abc123").and_return(response)
 
         result = described_class.delete_ci(params, secrets, context)
 
@@ -257,7 +257,7 @@ RSpec.describe Floe::ServiceNow::Cmdb do
       let(:response) { instance_double(Faraday::Response, :status => 204, :body => {}) }
 
       it "deletes a CI from custom table" do
-        expect(connection).to receive(:delete).with("/api/now/cmdb/instance/cmdb_ci_server/abc123").and_return(response)
+        expect(connection).to receive(:delete).with("/api/now/table/cmdb_ci_server/abc123").and_return(response)
 
         result = described_class.delete_ci(params, secrets, context)
 

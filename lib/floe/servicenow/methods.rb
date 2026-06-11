@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "faraday"
 require "json"
 
 module Floe
@@ -22,8 +21,8 @@ module Floe
 
       private_class_method def self.build_connection(params, secrets)
         instance_id = params["instance_id"]
-        username = secrets["username"]
-        password = secrets["password"]
+        username    = secrets["username"]
+        password    = secrets["password"]
 
         ::Faraday.new(
           :url     => "https://#{instance_id}.service-now.com",

@@ -19,7 +19,7 @@ module Floe
         sys_id = params["sys_id"]
 
         begin
-          response = connection.get("/api/now/cmdb/instance/#{table}/#{sys_id}")
+          response = connection.get("/api/now/table/#{table}/#{sys_id}")
           result = handle_response(response)
           ServiceNow.success!({}, :output => result["result"])
         rescue => err
@@ -39,7 +39,7 @@ module Floe
         table = params["table"] || "cmdb_ci"
 
         begin
-          response = connection.get("/api/now/cmdb/instance/#{table}") do |req|
+          response = connection.get("/api/now/table/#{table}") do |req|
             req.params["sysparm_query"] = params["query"] if params["query"]
             req.params["sysparm_limit"] = params["limit"] if params["limit"]
             req.params["sysparm_offset"] = params["offset"] if params["offset"]
@@ -65,7 +65,7 @@ module Floe
         table = params["table"] || "cmdb_ci"
 
         begin
-          response = connection.post("/api/now/cmdb/instance/#{table}") do |req|
+          response = connection.post("/api/now/table/#{table}") do |req|
             req.body = params.except("instance_id", "table")
           end
 
@@ -89,7 +89,7 @@ module Floe
         sys_id = params["sys_id"]
 
         begin
-          response = connection.patch("/api/now/cmdb/instance/#{table}/#{sys_id}") do |req|
+          response = connection.patch("/api/now/table/#{table}/#{sys_id}") do |req|
             req.body = params.except("sys_id", "instance_id", "table")
           end
 
@@ -113,7 +113,7 @@ module Floe
         sys_id = params["sys_id"]
 
         begin
-          response = connection.delete("/api/now/cmdb/instance/#{table}/#{sys_id}")
+          response = connection.delete("/api/now/table/#{table}/#{sys_id}")
           handle_response(response)
           ServiceNow.success!({}, :output => {"deleted" => true, "sys_id" => sys_id})
         rescue => err
